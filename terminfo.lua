@@ -11,8 +11,8 @@
 --  the $TERM parameter is passed as an optional second argument.
 
 local M = {} -- public interface
-M.Version     = '1.3' -- switch pod and doc over to using moonrocks
-M.VersionDate = '08jun2014'
+M.Version     = '1.5' -- termcap specified as an external dependency
+M.VersionDate = '16feb2015'
 
 local Cache = {}  -- Cache[term] maintained by update_cache()
 local ThisTerm = os.getenv('TERM') or 'vt100' -- if no idea, call it a VT100
@@ -333,12 +333,12 @@ respectively.
 =head1 DOWNLOAD
 
 This module is available as a LuaRock in
-http://rocks.moonscript.org/modules/peterbillam
+http://luarocks.org/modules/peterbillam
 so you should be able to install it with the command:
 
  $ su
  Password:
- # luarocks install --server=http://rocks.moonscript.org terminfo
+ # luarocks install terminfo
 
 or:
 
@@ -378,13 +378,13 @@ http://search.cpan.org/perldoc?Term::Terminfo
  infocmp
  http://www.pjb.com.au
  http://www.pjb.com.au/comp/
- http://rocks.moonscript.org/modules/peterbillam
+ http://luarocks.org/modules/peterbillam
  http://www.pjb.com.au/comp/lua/readkey.html
- http://rocks.moonscript.org/modules/peterbillam/readkey
+ http://luarocks.org/modules/peterbillam/readkey
  http://www.pjb.com.au/comp/lua/readline.html
- http://rocks.moonscript.org/modules/peterbillam/readline
+ http://luarocks.org/modules/peterbillam/readline
  http://www.pjb.com.au/comp/lua/terminfo.html
- http://rocks.moonscript.org/modules/peterbillam/terminfo
+ http://luarocks.org/modules/peterbillam/terminfo
 
 =back
 

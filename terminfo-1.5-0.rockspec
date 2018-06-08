@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "terminfo"
-version = "1.4-0"
+version = "1.5-0"
 -- LuaDist source
 source = {
-  tag = "1.4-0",
+  tag = "1.5-0",
   url = "git://github.com/LuaDist-testing/terminfo.git"
 }
 -- Original source
 -- source = {
---    url = "http://www.pjb.com.au/comp/lua/terminfo-1.4.tar.gz",
---    md5 = "21792f6c6d900260dcdc41557d666a50"
+--    url = "http://www.pjb.com.au/comp/lua/terminfo-1.5.tar.gz",
+--    md5 = "42fa66434875a12e8fc9f003773090d6"
 -- }
 description = {
    summary = "access the terminfo database",
@@ -23,11 +23,12 @@ description = {
 }
 -- http://www.luarocks.org/en/Rockspec_format
 dependencies = {
-   "lua >= 5.1",
+   "lua >= 5.1, <5.4",
    "luaposix >= 30",
 }
 external_dependencies = {  -- Duarn 20150216
 	TERMCAP = {
+		header  = "term.h",
 		library = "termcap";
 	};
 }
