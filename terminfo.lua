@@ -11,8 +11,8 @@
 --  the $TERM parameter is passed as an optional second argument.
 
 local M = {} -- public interface
-M.Version     = '1.2' -- installs as terminfo not Terminfo under luarocks 2.1.2
-M.VersionDate = '19may2014'
+M.Version     = '1.3' -- switch pod and doc over to using moonrocks
+M.VersionDate = '08jun2014'
 
 local Cache = {}  -- Cache[term] maintained by update_cache()
 local ThisTerm = os.getenv('TERM') or 'vt100' -- if no idea, call it a VT100
@@ -333,16 +333,16 @@ respectively.
 =head1 DOWNLOAD
 
 This module is available as a LuaRock in
-luarocks.org/repositories/rocks
+http://rocks.moonscript.org/modules/peterbillam
 so you should be able to install it with the command:
 
  $ su
  Password:
- # luarocks install terminfo
+ # luarocks install --server=http://rocks.moonscript.org terminfo
 
 or:
 
- # luarocks install http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec
+ # luarocks install http://www.pjb.com.au/comp/lua/terminfo-1.3-0.rockspec
 
 It depends on a I<term.h> header-file;
 so for example, on Debian you may also need:
@@ -352,6 +352,7 @@ so for example, on Debian you may also need:
 
 =head1 CHANGES
 
+ 20140519 1.3 switch pod and doc over to using moonrocks
  20140519 1.2 installs as terminfo not Terminfo under luarocks 2.1.2
  20130917 1.1 introduce tparm()
  20130915 1.0 first working version 
@@ -377,6 +378,13 @@ http://search.cpan.org/perldoc?Term::Terminfo
  infocmp
  http://www.pjb.com.au
  http://www.pjb.com.au/comp/
+ http://rocks.moonscript.org/modules/peterbillam
+ http://www.pjb.com.au/comp/lua/readkey.html
+ http://rocks.moonscript.org/modules/peterbillam/readkey
+ http://www.pjb.com.au/comp/lua/readline.html
+ http://rocks.moonscript.org/modules/peterbillam/readline
+ http://www.pjb.com.au/comp/lua/terminfo.html
+ http://rocks.moonscript.org/modules/peterbillam/terminfo
 
 =back
 
