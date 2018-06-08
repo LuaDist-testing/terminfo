@@ -1,0 +1,185 @@
+<HTML><HEAD><TITLE>terminfo.lua</TITLE>
+<LINK rel=stylesheet type="text/css"
+href="../styles.css" title="PJB Computing Styles">
+<META HTTP-EQUIV="Keywords"
+CONTENT="terminfo, Lua, module, luarock">
+</HEAD>
+<BODY LINK="#000066" VLINK="#000066" ALINK="#000066">
+<DIV>
+<H1><IMG SRC="../logo.gif" ALT=" " WIDTH=81 HEIGHT=32>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<FONT COLOR="#800000"><I>terminfo.lua</I></FONT>
+</H1>
+
+<!-- INDEX BEGIN -->
+<A NAME="index"></A>
+
+<TABLE ALIGN="center" WIDTH="85%" BORDER=0 CELLSPACING=0>
+<TR><TD ALIGN="left">
+<ul>
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+</ul>
+</TD><TD ALIGN="left">
+<ul>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#functions">FUNCTIONS</a></li>
+</ul>
+</TD><TD ALIGN="left">
+<ul>
+	<li><a href="#download">DOWNLOAD</a></li>
+	<li><a href="#changes">CHANGES</a></li>
+</ul>
+</TD><TD ALIGN="left">
+<ul>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+</ul>
+</TD></TR></TABLE>
+
+<!-- INDEX END -->
+<hr />
+<h3><a name="name">NAME</a></h3>
+<p><code>terminfo</code> - access the <em>terminfo</em> database</p>
+<p>
+</p>
+<hr />
+<h3><a name="synopsis">SYNOPSIS</a></h3>
+<pre>
+ local T = require 'terminfo'</pre>
+<pre>
+ print(&quot;Can a vt100 do overstrike ? &quot;,
+    tostring(T.getflag('os','vt100')))
+ print(&quot;Tabs on this terminal are initially every &quot;,
+    T.getnum('it'))
+ print(&quot;Can this terminal do overstrike ? &quot;,
+    tostring(T.flag_by_varname('over_strike')))
+ print(&quot;Tabs on xterm are initially every &quot;,
+    T.num_by_varname('init_tabs', 'xterm'))
+ if T.get('km') then  -- this kbd has a Meta-Key :-)
+    if T.get('init_tabs') &lt; 8 then
+       print('someone changed the tabstop setting !')
+    end
+    print('testing the Home key:'..T.get('key_home'))
+    if T.get('cud1') ~= T.get('cursor_down') then
+       print('BUG: capname and varname gave different answers')
+    end
+ end
+ -- see:  man terminfo
+</pre><p>
+</p>
+<hr />
+<h3><a name="description">DESCRIPTION</a></h3>
+<p>This module provides access to <em>terminfo</em> database entries,
+see <em>man terminfo</em>.</p>
+<p>This database provides information about a terminal,
+in three separate sets of capabilities.
+Flag capabilities are boolean;
+they indicate the presence of a particular ability, feature, or bug.
+Number capabilities give the size,
+count or other numeric detail of some feature of the terminal.
+String capabilities are usually control strings
+that the terminal will recognise, or send.</p>
+<p>Each capability has two names; a short name called the <em>capname</em>,
+and a longer name called the <em>varname</em>;
+for details, see <em>man terminfo</em>.
+This module,
+like the Perl <em>Term::Terminfo</em> module, provides two sets of functions,
+one that works on <em>capnames</em>, one that works on <em>varnames</em>.
+It also, unlike the Perl module,
+provides a general-purpose function <strong>get(name)</strong> which returns
+the capability whether it is a flag, number or string,
+and whether the name is a <em>capname</em> or a <em>varname</em>.</p>
+<p>Unlike the Perl <em>Term::Terminfo</em> module, there is no separate constructor.
+The TERM parameter is passed as an optional second argument.
+If it is not present, the current terminal,
+from the environment variable <em>TERM</em>, is used.</p>
+<p>
+</p>
+<hr />
+<h3><a name="functions">FUNCTIONS</a></h3>
+<p>
+</p>
+<B><a name="get">T.get( name [, TERM] )</a></B><BR>
+Returns the value of the capability of the given name,
+whether the capability is a flag, number or string,
+and whether the name is a <em>capname</em> or a <em>varname</em>.
+This function is not present in the Perl <em>Term::Terminfo</em> module.
+<p>
+</p>
+<B><a name="getflag">bool = T.getflag( capname [, TERM] )</a></B><BR>
+<B><a name="getnum">num = T.getnum( capname [, TERM] )</a></B><BR>
+<B><a name="getstr">str = T.getstr( capname [, TERM] )</a></B><BR>
+Return the value of the flag, number or string capability respectively,
+of the given <em>capname</em>.
+<p>
+</p>
+<B><a name="flag_by_varname">bool = T.flag_by_varname( varname [, TERM] )</a></B><BR>
+<B><a name="num_by_varname">num = T.num_by_varname( varname [, TERM] )</a></B><BR>
+<B><a name="str_by_varname">str = T.str_by_varname( varname [, TERM] )</a></B><BR>
+Return the value of the flag, number or string capability respectively,
+of the given <em>varname</em>.
+<p>
+</p>
+<B><a name="flag_capnames">capnames = T.flag_capnames( [TERM] )</a></B><BR>
+<B><a name="num_capnames">capnames = T.num_capnames( [TERM] )</a></B><BR>
+<B><a name="str_capnames">capnames = T.str_capnames( [TERM] )</a></B><BR>
+Return arrays of the <em>capnames</em> of the supported
+flags, numbers, and strings respectively.
+<p>
+</p>
+<B><a name="flag_varnames">varnames = T.flag_varnames( [TERM] )</a></B><BR>
+<B><a name="num_varnames">varnames = T.num_varnames( [TERM] )</a></B><BR>
+<B><a name="str_varnames">varnames = T.str_varnames( [TERM] )</a></B><BR>
+Return arrays of the <em>varnames</em> of the supported
+flags, numbers, and strings respectively.
+<p>
+</p>
+<hr />
+<h3><a name="download">DOWNLOAD</a></h3>
+<p>This module is available as a LuaRock in
+luarocks.org/repositories/rocks
+so you should be able to install it with the command:</p>
+<pre>
+ $ su
+ Password:
+ # luarocks install terminfo</pre>
+<p>or:</p>
+<pre>
+ # luarocks install <a href="http://www.pjb.com.au/comp/lua/terminfo-1.0-0.rockspec">http://www.pjb.com.au/comp/lua/terminfo-1.0-0.rockspec</a></pre>
+<p>
+</p>
+<hr />
+<h3><a name="changes">CHANGES</a></h3>
+<pre>
+ 20130915 1.0 first working version</pre>
+<p>
+</p>
+<hr />
+<h3><a name="author">AUTHOR</a></h3>
+<p>Translated into Lua by Peter Billam (
+<a href="http://www.pjb.com.au/comp/contact.html">http://www.pjb.com.au/comp/contact.html</a>
+) from the Perl CPAN module (
+<a href="http://search.cpan.org/perldoc?Term::Terminfo">http://search.cpan.org/perldoc?Term::Terminfo</a>
+) by Paul Evans</p>
+<p>
+</p>
+<hr />
+<h3><a name="see_also">SEE ALSO</a></h3>
+<pre>
+ <a href="https://github.com/mauke/unibilium">unibilium</A> - a terminfo parsing library
+ <a href="http://search.cpan.org/perldoc?Term::Terminfo">http://search.cpan.org/perldoc?Term::Terminfo</a>
+ man terminfo
+ ~/.terminfo/
+ /etc/terminfo/
+ /lib/terminfo/
+ /usr/share/terminfo/
+ tput
+ tic
+ <A HREF="http://www.pjb.com.au">www.pjb.com.au</A>
+</pre>
+
+</DIV>
+</body>
+
+</html>
