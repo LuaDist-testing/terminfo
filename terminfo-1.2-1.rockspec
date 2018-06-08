@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "terminfo"
-version = "1.1-1"
+version = "1.2-1"
 -- LuaDist source
 source = {
-  tag = "1.1-1",
+  tag = "1.2-1",
   url = "git://github.com/LuaDist-testing/terminfo.git"
 }
 -- Original source
 -- source = {
---    url = "http://www.pjb.com.au/comp/lua/terminfo-1.1.tar.gz",
---    md5 = "09600c8cb676bf9b74b6df103a9b86d9"
+--    url = "http://www.pjb.com.au/comp/lua/terminfo-1.2.tar.gz",
+--    md5 = "18f77aaabd5b14522bc8efcfec98fe78"
 -- }
 description = {
    summary = "access the terminfo database",
@@ -35,7 +35,7 @@ build = {
             "C-terminfo.c"
          }
       },
-      Terminfo = "terminfo.lua"
+      terminfo = "terminfo.lua"
    },
    copy_directories = {
       "doc", "test"

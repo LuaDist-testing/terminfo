@@ -11,8 +11,8 @@
 --  the $TERM parameter is passed as an optional second argument.
 
 local M = {} -- public interface
-M.Version     = '1.1' -- introduce tparm()
-M.VersionDate = '17sep2013'
+M.Version     = '1.2' -- installs as terminfo not Terminfo under luarocks 2.1.2
+M.VersionDate = '19may2014'
 
 local Cache = {}  -- Cache[term] maintained by update_cache()
 local ThisTerm = os.getenv('TERM') or 'vt100' -- if no idea, call it a VT100
@@ -200,7 +200,7 @@ C<terminfo> - access the I<terminfo> database
 
 =head1 SYNOPSIS
 
- local T = require 'terminfo'
+ local T = require 'terminfo'  -- see: man terminfo
 
  print("Can a vt100 do overstrike ? ",
     tostring(T.getflag('os','vt100')))
@@ -224,9 +224,9 @@ C<terminfo> - access the I<terminfo> database
     end
  end
 
- io.stderr:write(T.tparm(T.get('cursor_address'),20,30))
-
- -- see: man terminfo
+ local P = require 'posix'
+ local tty = io.open(P.ctermid(), 'a+') -- the controlling terminal
+ tty:write(T.tparm(T.get('cursor_address'),20,30))
 
 =head1 DESCRIPTION
 
@@ -250,7 +250,7 @@ are represented, using B<%> characters, in a notation documented in the
 I<Parameterized Strings> section of I<man terminfo>;
 these parameters must be put in place with the function
 B<tparm(capability, parameters...)>
-This function is not present in the Perl module,
+This function is not present in the Perl module.
 
 Each capability has two names; a short name called the I<capname>,
 and a longer name called the I<varname>;
@@ -344,8 +344,15 @@ or:
 
  # luarocks install http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec
 
+It depends on a I<term.h> header-file;
+so for example, on Debian you may also need:
+
+ # aptitude install libncurses5-dev
+
+
 =head1 CHANGES
 
+ 20140519 1.2 installs as terminfo not Terminfo under luarocks 2.1.2
  20130917 1.1 introduce tparm()
  20130915 1.0 first working version 
 

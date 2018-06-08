@@ -6,7 +6,7 @@ CONTENT="terminfo, Lua, module, luarock">
 </HEAD>
 <BODY LINK="#000066" VLINK="#000066" ALINK="#000066">
 <DIV>
-<H1><IMG SRC="../logo.gif" ALT=" " WIDTH=81 HEIGHT=32>
+<H1><IMG SRC="../logo.jpg" ALT=" " WIDTH=126 HEIGHT=52>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <FONT COLOR="#800000"><I>terminfo.lua</I></FONT>
 </H1>
@@ -46,29 +46,27 @@ CONTENT="terminfo, Lua, module, luarock">
 <hr />
 <h3><a name="synopsis">SYNOPSIS</a></h3>
 <pre>
- local T = require 'terminfo'</pre>
-<pre>
- print(&quot;Can a vt100 do overstrike ? &quot;,
-    tostring(T.getflag('os','vt100')))
- print(&quot;Tabs on this terminal are initially every &quot;,
-    T.getnum('it'))
- print(&quot;Can this terminal do overstrike ? &quot;,
-    tostring(T.flag_by_varname('over_strike')))
- print(&quot;Tabs on xterm are initially every &quot;,
-    T.num_by_varname('init_tabs', 'xterm'))
- if T.get('km') then  -- this kbd has a Meta-Key :-)
-    if T.get('init_tabs') &lt; 8 then
+ local T = require 'terminfo'  -- see:  man terminfo
+ print("Can a vt100 do overstrike ? ",
+    tostring(T<A HREF="#getflag">.getflag('os','vt100')</A>))
+ print("Tabs on this terminal are initially every ",
+    T<A HREF="#getnum">.getnum('it')</A>)
+ print("Can this terminal do overstrike ? ",
+    tostring(T<A HREF="#flag_by_varname">.flag_by_varname('over_strike')</A>))
+ print("Tabs on xterm are initially every ",
+    T<A HREF="#flag_by_varname">.num_by_varname('init_tabs', 'xterm')</A>)
+ if T<A HREF="#get">.get('km')</A> then  -- this kbd has a Meta-Key :-)
+    if T<A HREF="#get">.get('init_tabs')</A> &lt; 8 then
        print('someone changed the tabstop setting !')
     end
     print('testing the Home key:'..<A HREF="#get">T.get</A>('key_home'))
-    if <A HREF="#get">T.get</A>('cud1') ~= <A HREF="#get">T.get</A>('cursor_down') then
+    if T<A HREF="#get">.get('cud1') ~= T.get('cursor_down')</A> then
        print('BUG: capname and varname gave different answers')
     end
  end
-
- io.stderr:write(<A HREF="#tparm">T.tparm</A>(<A HREF="#get">T.get</A>('cursor_address'),20,30))
-
- -- see:  man terminfo
+ local P = require 'posix'
+ local tty = io.open(P.ctermid(), 'a+') -- the controlling terminal
+ tty:write(T<A HREF="#tparm">.tparm</A>(<A HREF="#get">T.get('cursor_address')</A>,20,30))
 </pre><p>
 </p>
 <hr />
@@ -95,7 +93,7 @@ in a notation documented in the
 of <I>man&nbsp;terminfo</I>;
 these parameters must be put in place with the function
 <B><A HREF="#tparm">tparm(capability, parameters...)</A></B>
-This function is not present in the Perl module,
+This function is not present in the Perl module.
 </p><p>
 Each capability has two names; a short name called the <em>capname</em>,
 and a longer name called the <em>varname</em>;
@@ -189,12 +187,18 @@ so you should be able to install it with the command:</p>
  # luarocks install terminfo</pre>
 <p>or:</p>
 <pre>
- # luarocks install <a href="http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec">http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec</a></pre>
+ # luarocks install <a href="http://www.pjb.com.au/comp/lua/terminfo-1.2-0.rockspec">http://www.pjb.com.au/comp/lua/terminfo-1.2-0.rockspec</a></pre>
+<p>
+It depends on a <I>term.h</I> header-file;
+so for example, on Debian you may also need:
+</p><pre>
+ # aptitude install libncurses5-dev</pre>
 <p>
 </p>
 <hr />
 <h3><a name="changes">CHANGES</a></h3>
 <pre>
+ 20140519 1.2 installs as terminfo not Terminfo under luarocks 2.1.2
  20130917 1.1 introduce <A HREF="#tparm">tparm()</A>
  20130915 1.0 first working version</pre>
 <p>
@@ -218,8 +222,9 @@ by Paul Evans</p>
  tput
  infocmp
  <A HREF="http://linux.die.net/man/3/tparm">linux.die.net/man/3/tparm</A>
+ <A HREF="http://www.pjb.com.au/comp/lua/readline.html">readline.lua</A>
  <A HREF="http://www.pjb.com.au">www.pjb.com.au</A>
- <A HREF="http://www.pjb.com.au/comp/">www.pjb.com.au/comp/</A>
+ <A HREF="http://www.pjb.com.au/comp/index.html#lua">www.pjb.com.au/comp/</A>
 </pre>
 
 </DIV>
