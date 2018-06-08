@@ -162,6 +162,27 @@ static int c_strings_by_varname(lua_State *L) {  /* Lua stack: termtype */
   CLEANUP
 }
 
+static int c_tparm(lua_State *L) {  /* Lua stack: str, p1,p2, ... p9 */
+  /* Portable applications should provide 9 params after the format; zeroes
+     are fine for this purpose. ...  A delay in mS  may appear anywhere in a
+     string capability, in $<..> brackets, as in el=\EK$<5> (man tparm)
+     In xterm, it's only used in flash, but in vt100 it's everywhere */
+  size_t len;  /* none of them should contain zeroes */
+  const char *str = lua_tolstring(L, 1, &len);
+  lua_Integer p1  = lua_tointeger(L, 2);
+  lua_Integer p2  = lua_tointeger(L, 3);
+  lua_Integer p3  = lua_tointeger(L, 4);
+  lua_Integer p4  = lua_tointeger(L, 5);
+  lua_Integer p5  = lua_tointeger(L, 6);
+  lua_Integer p6  = lua_tointeger(L, 7);
+  lua_Integer p7  = lua_tointeger(L, 8);
+  lua_Integer p8  = lua_tointeger(L, 9);
+  lua_Integer p9  = lua_tointeger(L, 10);
+  const char *value = tparm(str, p1,p2,p3,p4,p5,p6,p7,p8,p9);
+  lua_pushstring(L, value);
+  return 1;
+}
+
 /* ----------------- evolved from C-midialsa.c ---------------- */
 struct constant {  /* Gems p. 334 */
     const char * name;
@@ -179,6 +200,7 @@ static const luaL_Reg prv[] = {  /* private functions */
     {"flags_by_capname",   c_flags_by_capname},
     {"nums_by_capname",    c_nums_by_capname},
     {"strings_by_capname", c_strings_by_capname},
+    {"tparm",              c_tparm},
     {NULL, NULL}
 };
 

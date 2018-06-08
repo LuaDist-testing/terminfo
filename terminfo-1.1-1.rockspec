@@ -1,23 +1,22 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "terminfo"
-version = "1.0-1"
+version = "1.1-1"
 -- LuaDist source
 source = {
-  tag = "1.0-1",
+  tag = "1.1-1",
   url = "git://github.com/LuaDist-testing/terminfo.git"
 }
 -- Original source
 -- source = {
---    url = "http://www.pjb.com.au/comp/lua/terminfo-1.0.tar.gz",
---    md5 = "a5c2fe79508682b0f9323c2dd96f8f1e"
+--    url = "http://www.pjb.com.au/comp/lua/terminfo-1.1.tar.gz",
+--    md5 = "09600c8cb676bf9b74b6df103a9b86d9"
 -- }
 description = {
-   summary = "access the terminfo database, like CPAN's Term::Terminfo",
+   summary = "access the terminfo database",
    detailed = [[
-      This module is a re-expression in Lua by Peter Billam of the
-      Term::Terminfo Perl module by Paul Evans
-      see: http://search.cpan.org/perldoc?Term::Terminfo
+      This module is a re-expression in Lua by Peter Billam of the Perl
+      Term::Terminfo module, plus extra functions get() and tparm().
    ]],
    homepage = "http://www.pjb.com.au/comp/lua/terminfo.html",
    license = "MIT/X11"

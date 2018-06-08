@@ -81,7 +81,7 @@ xv = M.num_by_varname('columns')
 if not ok(xc==xv, "getnum('cols') matches num_by_varname('columns')") then
 	print('xc='..tostring(xc)..' xv='..tostring(xv))
 end
-if not ok(xc>5, "getnum('cols') was greater than 5") then
+if not ok(xc>5, "getnum('cols') returns "..tostring(xc)) then
 	print('xc='..tostring(xc))
 end
 
@@ -108,7 +108,7 @@ xv = M.get('columns')
 if not ok(xc==xv, "get('cols') matches get('columns')") then
     print('xc='..tostring(xc)..' xv='..tostring(xv))
 end
-if not ok(xc>5, "get('cols') was greater than 5") then
+if not ok(xc>5, "get('cols') returns "..tostring(xc)) then
     print('xc='..tostring(xc))
 end
 
@@ -118,9 +118,22 @@ if not ok(xc==xv, "get('el') matches get('clr_eol')") then
     print('xc='..tostring(xc)..' xv='..tostring(xv))
 end
 
-xc = M.getflag('km','vt220')
-xv = M.flag_by_varname('has_meta_key','vt220')
-if not ok(xc==xv, "getflag('km','vt220') matches flag_by_varname('has_meta_key','vt220')") then
+xc = M.get('Q2cY?')
+if not ok(xc==nil, "get('Q2cY?') returns nil") then
+	print('xc='..tostring(xc))
+end
+xv = M.get('Skwuurbth_woklifaticAtiroary67_glurk')
+if not ok(xv==nil, "get('Skwuurbth_woklifaticAtiroary67_glurk') returns nil") then
+	print('xv='..tostring(xv))
+end
+
+xc = M.getflag('km','xterm')
+xv = M.flag_by_varname('has_meta_key','xterm')
+if not ok(xc == true, "getflag('km','xterm') returns true") then
+	print("type(M.getflag('km','xterm') returned "..tostring(xc))
+end
+if not ok(xc==xv,
+  "getflag('km','xterm') matches flag_by_varname('has_meta_key','xterm')") then
     print('xc='..tostring(xc)..' xv='..tostring(xv))
 end
 
@@ -135,7 +148,7 @@ xv = M.num_by_varname('columns','vt200')
 if not ok(xc==xv, "getnum('cols','vt200') matches num_by_varname('columns','vt200')") then
     print('xc='..tostring(xc)..' xv='..tostring(xv))
 end
-if not ok(xc>5, "getnum('cols','vt200') was greater than 5") then
+if not ok(xc>5, "getnum('cols','vt200') returns "..tostring(xc)) then
     print('xc='..tostring(xc))
 end
 
@@ -145,15 +158,13 @@ if not ok(xc==xv, "getstr('el','vt100') matches str_by_varname('clr_eol','vt100'
     print('xc='..tostring(xc)..' xv='..tostring(xv))
 end
 
-
-
 local bool_caps = M.flag_capnames('vt100')
 local bool_vars = M.flag_varnames('vt100')
 if not ok(#bool_caps==#bool_vars, 'for a vt100 #bool_caps == #bool_vars') then
 	print('bool_caps = '..DataDumper(bool_caps))
 	print('bool_vars = '..DataDumper(bool_vars))
 end
-ok(#bool_caps > 3, '#bool_caps was '..tostring(#bool_caps))
+ok(#bool_caps > 3, '#bool_caps is '..tostring(#bool_caps))
 
 local num_caps = M.num_capnames('vt220')
 local num_vars = M.num_varnames('vt220')
@@ -161,7 +172,7 @@ if not ok(#num_caps==#num_vars, 'for a vt220 #num_caps == #num_vars') then
 	print('num_caps = '..DataDumper(num_caps))
 	print('num_vars = '..DataDumper(num_vars))
 end
-ok(#num_caps > 3, '#num_caps was '..tostring(#num_caps))
+ok(#num_caps > 3, '#num_caps is '..tostring(#num_caps))
 
 local str_caps = M.str_capnames()
 local str_vars = M.str_varnames()
@@ -169,8 +180,35 @@ if not ok(#str_caps==#str_vars, '#str_caps == #str_vars') then
 	print('str_caps = '..DataDumper(str_caps))
 	print('str_vars = '..DataDumper(str_vars))
 end
-ok(#str_caps > 20, '#str_caps was '..tostring(#str_caps))
+ok(#str_caps > 20, '#str_caps is '..tostring(#str_caps))
 
-print('Failed '..Failed..' tests out of '..i_test)
+-- for k,v in pairs(M) do print(k,v) end
+
+-- local cap = M.get('cursor_address', 'xterm')
+-- print('cap='..cap)
+local cap = '[%i%p1%d;%p2%dH'
+local str = M.tparm(cap, 20,30)
+if not ok(str=='[21;31H', 'tparm("'..cap..'",20,30) returned "[21;31H"') then
+	print('str = '..tostring(str))
+end
+
+cap = '[%i%p1%d$<21>;%p2%d$<3>H'
+local str = M.tparm(cap, 20,30)
+str = string.gsub(str, '%$<[*/%d]+>', '')
+if not ok(str=='[21;31H', 'tparm("'..cap..'",20,30) returned "[21;31H"') then
+	print('str = '..tostring(str))
+end
+
+cap = '[%i%p1%d$<21/>;%p2%d$<3*>H'
+local str = M.tparm(cap, 20,30)
+if not ok(str=='[21;31H', 'tparm("'..cap..'",20,30) returned "[21;31H"') then
+	print('str = '..tostring(str))
+end
+
+if Failed == 0 then
+	print('Passed all '..i_test..' tests')
+else
+	print('Failed '..Failed..' tests out of '..i_test)
+end
 
 os.exit()

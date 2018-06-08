@@ -11,8 +11,8 @@
 --  the $TERM parameter is passed as an optional second argument.
 
 local M = {} -- public interface
-M.Version     = '1.01' -- first working version
-M.VersionDate = '12sep2013'
+M.Version     = '1.1' -- introduce tparm()
+M.VersionDate = '17sep2013'
 
 local Cache = {}  -- Cache[term] maintained by update_cache()
 local ThisTerm = os.getenv('TERM') or 'vt100' -- if no idea, call it a VT100
@@ -98,12 +98,25 @@ function M.get ( name, term )  -- not in the Perl module; looks everywhere
 		return x
 	end
 end
+
+function M.tparm ( capability, ... )
+	-- nine params for portability, says man tparm, so:
+	local args = {tostring(capability), 0,0,0,0,0,0,0,0,0}
+	for i,v in ipairs{...} do
+		if i > 9 then break end -- could print a warning ?
+		args[i+1] = tonumber(v)
+	end
+	local  str = prv.tparm(unpack(args))
+	str = string.gsub(str, '%$<%d+[*/]?>', '') -- remove the $<33> padding
+	return str
+end
 -- could do a cap2varname, perhaps also varname2cap; probably not useful.
 
 function M.getflag ( capname, term )
 	term = term or ThisTerm
 	update_cache( term )
 	return Cache[term]['flags_by_capname'][capname]
+	-- returns true or nil, rather than true or false...
 end
 
 function M.getnum ( capname, term )
@@ -123,6 +136,7 @@ function M.flag_by_varname ( varname, term )
 	term = term or ThisTerm
 	update_cache( term )
 	return Cache[term]['flags_by_varname'][varname]
+	-- returns true or nil, rather than true or false...
 end
 
 function M.num_by_varname ( varname, term )
@@ -209,7 +223,10 @@ C<terminfo> - access the I<terminfo> database
        print('BUG: capname and varname gave different answers')
     end
  end
- -- see:  man terminfo
+
+ io.stderr:write(T.tparm(T.get('cursor_address'),20,30))
+
+ -- see: man terminfo
 
 =head1 DESCRIPTION
 
@@ -218,12 +235,22 @@ see I<man terminfo>.
 
 This database provides information about a terminal,
 in three separate sets of capabilities.
-Flag capabilities are boolean;
+Flag capabilities are boolean
+(more accurately, they are either I<true> or I<nil>);
 they indicate the presence of a particular ability, feature, or bug.
 Number capabilities give the size,
 count or other numeric detail of some feature of the terminal.
 String capabilities are usually control strings
 that the terminal will recognise, or send.
+
+String capabilities involving no parameters (e.g. I<clear_screen>)
+can be printed directly to the screen and will work as expected.
+Any parameters (e.g. with I<cursor_address>)
+are represented, using B<%> characters, in a notation documented in the
+I<Parameterized Strings> section of I<man terminfo>;
+these parameters must be put in place with the function
+B<tparm(capability, parameters...)>
+This function is not present in the Perl module,
 
 Each capability has two names; a short name called the I<capname>,
 and a longer name called the I<varname>;
@@ -237,51 +264,68 @@ the capability whether it is a flag, number or string,
 and whether the name is a I<capname> or a I<varname>.
 
 Unlike the Perl I<Term::Terminfo> module, there is no separate constructor.
-The TERM parameter is passed as an optional second argument.
+The I<term> parameter is passed as an optional second argument.
 If it is not present, the current terminal,
 from the environment variable I<TERM>, is used.
 
 =head1 FUNCTIONS
 
-=head3 T.get( name [, TERM] )
+=head3 T.get( name [, term] )
 
 Returns the value of the capability of the given name,
 whether the capability is a flag, number or string,
 and whether the name is a I<capname> or a I<varname>.
 This function is not present in the Perl I<Term::Terminfo> module.
 
-=head3 bool = T.getflag( capname [, TERM] )
+=head3 T.tparm( capability, <param1, param2, ...> )
 
-=head3 num = T.getnum( capname [, TERM] )
+Substitutes the parameters according to the notation documented in the
+I<Parameterized Strings> section of I<man terminfo>,
+and returns the resulting string, for example,
+ io.stderr:write(T.tparm(T.get('cursor_address'),20,30))
 
-=head3 str = T.getstr( capname [, TERM] )
+So that you remain in control of your input/output at the Lua level,
+no I<tputs> function is provided;
+thus, as a side effect, any padding information will be lost.
+This is very rarely a problem nowadays, but it could mean that
+for example: the I<flash> capability may not work as expected.
+If you really need this, you can still use
+ os.execute('tput flash')
+
+This function is not present in the Perl I<Term::Terminfo> module.
+
+=head3 bool = T.getflag( capname [, term] )
+
+=head3 num = T.getnum( capname [, term] )
+
+=head3 str = T.getstr( capname [, term] )
 
 Returns the value of the flag, number or string capability respectively,
 of the given I<capname>.
 
-=head3 bool = T.flag_by_varname( varname [, TERM] )
+=head3 bool = T.flag_by_varname( varname [, term] )
 
-=head3 num = T.num_by_varname( varname [, TERM] )
+=head3 num = T.num_by_varname( varname [, term] )
 
-=head3 str = T.str_by_varname( varname [, TERM] )
+=head3 str = T.str_by_varname( varname [, term] )
 
 Returns the value of the flag, number or string capability respectively,
 of the given I<varname>.
 
-=head3 capnames = T.flag_capnames( [TERM] )
+=head3 capnames = T.flag_capnames( [term] )
 
-=head3 capnames = T.num_capnames( [TERM] )
+=head3 capnames = T.num_capnames( [term] )
 
-=head3 capnames = T.str_capnames( [TERM] )
+=head3 capnames = T.str_capnames( [term] )
 
 Return arrays of the I<capnames> of the supported flags, numbers, and strings
 respectively.
 
-=head3 varnames = T.flag_varnames( [TERM] )
+=head3 varnames = T.flag_varnames( [term] )
 
-=head3 varnames = T.num_varnames( [TERM] )
+=head3 varnames = T.num_varnames( [term] )
 
-=head3 varnames = T.str_varnames( [TERM] )
+=head3 varnames = T.str_varnames( [term] )
 
 Return arrays of the I<varnames> of the supported flags, numbers, and strings
 respectively.
@@ -298,10 +342,11 @@ so you should be able to install it with the command:
 
 or:
 
- # luarocks install http://www.pjb.com.au/comp/lua/terminfo-1.0-0.rockspec
+ # luarocks install http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec
 
 =head1 CHANGES
 
+ 20130917 1.1 introduce tparm()
  20130915 1.0 first working version 
 
 =head1 AUTHOR
@@ -316,20 +361,15 @@ http://search.cpan.org/perldoc?Term::Terminfo
 
 =over 3
 
-C<unibilium> - a terminfo parsing library -
-https://github.com/mauke/unibilium
-
-http://search.cpan.org/perldoc?Term::Terminfo
-
- $HOME/.terminfo
- /etc/terminfo
- /lib/terminfo
- /usr/share/terminfo
-
- tput
- tic
-
+ unibilium - a terminfo parsing library - https://github.com/mauke/unibilium
+ http://search.cpan.org/perldoc?Term::Terminfo
  man terminfo
+ /usr/share/terminfo
+ http://linux.die.net/man/3/tparm
+ tput
+ infocmp
+ http://www.pjb.com.au
+ http://www.pjb.com.au/comp/
 
 =back
 

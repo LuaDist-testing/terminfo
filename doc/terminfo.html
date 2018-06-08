@@ -60,77 +60,119 @@ CONTENT="terminfo, Lua, module, luarock">
     if T.get('init_tabs') &lt; 8 then
        print('someone changed the tabstop setting !')
     end
-    print('testing the Home key:'..T.get('key_home'))
-    if T.get('cud1') ~= T.get('cursor_down') then
+    print('testing the Home key:'..<A HREF="#get">T.get</A>('key_home'))
+    if <A HREF="#get">T.get</A>('cud1') ~= <A HREF="#get">T.get</A>('cursor_down') then
        print('BUG: capname and varname gave different answers')
     end
  end
+
+ io.stderr:write(<A HREF="#tparm">T.tparm</A>(<A HREF="#get">T.get</A>('cursor_address'),20,30))
+
  -- see:  man terminfo
 </pre><p>
 </p>
 <hr />
 <h3><a name="description">DESCRIPTION</a></h3>
 <p>This module provides access to <em>terminfo</em> database entries,
-see <em>man terminfo</em>.</p>
-<p>This database provides information about a terminal,
+see <em>man terminfo</em>.
+</p><p>
+This database provides information about a terminal,
 in three separate sets of capabilities.
-Flag capabilities are boolean;
+Flag capabilities are boolean
+(more accurately, they are either <I>true</I> or <I>nil</I>);
 they indicate the presence of a particular ability, feature, or bug.
 Number capabilities give the size,
 count or other numeric detail of some feature of the terminal.
 String capabilities are usually control strings
-that the terminal will recognise, or send.</p>
-<p>Each capability has two names; a short name called the <em>capname</em>,
+that the terminal will recognise, or send.
+</p><p>
+String capabilities involving no parameters (e.g. <I>clear_screen</I>)
+can be printed directly to the screen and will work as expected.
+Any parameters (e.g. with <I>cursor_address</I>)
+are represented, using <B>%</B> characters,
+in a notation documented in the
+<I>Parameterized&nbsp;Strings</I> section
+of <I>man&nbsp;terminfo</I>;
+these parameters must be put in place with the function
+<B><A HREF="#tparm">tparm(capability, parameters...)</A></B>
+This function is not present in the Perl module,
+</p><p>
+Each capability has two names; a short name called the <em>capname</em>,
 and a longer name called the <em>varname</em>;
 for details, see <em>man terminfo</em>.
-This module,
-like the Perl <em>Term::Terminfo</em> module, provides two sets of functions,
+This module, like the Perl <em>
+<a href="http://search.cpan.org/perldoc?Term::Terminfo">Term::Terminfo</a>
+</em> module, provides two sets of functions,
 one that works on <em>capnames</em>, one that works on <em>varnames</em>.
-It also, unlike the Perl module,
-provides a general-purpose function <strong>get(name)</strong> which returns
+It also, unlike the Perl module, provides a general-purpose function
+<B><A HREF="#get">get(name)</A></B> which returns
 the capability whether it is a flag, number or string,
-and whether the name is a <em>capname</em> or a <em>varname</em>.</p>
-<p>Unlike the Perl <em>Term::Terminfo</em> module, there is no separate constructor.
-The TERM parameter is passed as an optional second argument.
+and whether the name is a <em>capname</em> or a <em>varname</em>.
+</p><p>
+Unlike the Perl <em>
+<a href="http://search.cpan.org/perldoc?Term::Terminfo">Term::Terminfo</a></em>
+module, there is no separate constructor.
+The <I>term</I> parameter is passed as an optional second argument.
 If it is not present, the current terminal,
-from the environment variable <em>TERM</em>, is used.</p>
-<p>
+from the environment variable <em>TERM</em>, is used.
+</p><p>
 </p>
 <hr />
 <h3><a name="functions">FUNCTIONS</a></h3>
 <p>
 </p>
-<B><a name="get">T.get( name [, TERM] )</a></B><BR>
+<B><a name="get">T.get( name [, term] )</a></B><BR>
 Returns the value of the capability of the given name,
 whether the capability is a flag, number or string,
 and whether the name is a <em>capname</em> or a <em>varname</em>.
-This function is not present in the Perl <em>Term::Terminfo</em> module.
+This function is not present in the Perl <em>
+<a href="http://search.cpan.org/perldoc?Term::Terminfo">Term::Terminfo</a>
+</em> module.
 <p>
 </p>
-<B><a name="getflag">bool = T.getflag( capname [, TERM] )</a></B><BR>
-<B><a name="getnum">num = T.getnum( capname [, TERM] )</a></B><BR>
-<B><a name="getstr">str = T.getstr( capname [, TERM] )</a></B><BR>
+<B><a name="tparm">T.tparm( capability, &lt;param1, param2, ...&gt; )</a></B><BR>
+Substitutes the parameters according to the notation documented in the
+<I>Parameterized Strings</I> section of <I>man terminfo</I>,
+and returns the resulting string, for example,<BR>
+&nbsp; <CODE> io.stderr:write(T.tparm(T.get('cursor_address'),20,30))</CODE>
+<BR>
+So that you remain in control of your input/output at the Lua level,
+no <I>tputs</I> function is provided;
+thus, as a side effect, any padding information will be lost.
+This is very rarely a problem nowadays, but it could mean that
+for example: the <I>flash</I> capability may not work as expected.
+If you really need this, you can resort to:
+&nbsp; <CODE>os.execute('tput&nbsp;flash')</CODE>
+<BR>
+This function is not present in the Perl <em>
+<a href="http://search.cpan.org/perldoc?Term::Terminfo">Term::Terminfo</a>
+</em> module.
+<p>
+</p>
+<B><a name="getflag">bool = T.getflag( capname [, term] )</a></B><BR>
+<B><a name="getnum">num = T.getnum( capname [, term] )</a></B><BR>
+<B><a name="getstr">str = T.getstr( capname [, term] )</a></B><BR>
 Return the value of the flag, number or string capability respectively,
 of the given <em>capname</em>.
 <p>
 </p>
-<B><a name="flag_by_varname">bool = T.flag_by_varname( varname [, TERM] )</a></B><BR>
-<B><a name="num_by_varname">num = T.num_by_varname( varname [, TERM] )</a></B><BR>
-<B><a name="str_by_varname">str = T.str_by_varname( varname [, TERM] )</a></B><BR>
+<B><a name="flag_by_varname">bool = T.flag_by_varname( varname [, term] )</a></B><BR>
+<B><a name="num_by_varname">num = T.num_by_varname( varname [, term] )</a></B><BR>
+<B><a name="str_by_varname">str = T.str_by_varname( varname [, term] )</a></B><BR>
 Return the value of the flag, number or string capability respectively,
 of the given <em>varname</em>.
 <p>
 </p>
-<B><a name="flag_capnames">capnames = T.flag_capnames( [TERM] )</a></B><BR>
-<B><a name="num_capnames">capnames = T.num_capnames( [TERM] )</a></B><BR>
-<B><a name="str_capnames">capnames = T.str_capnames( [TERM] )</a></B><BR>
+<B><a name="flag_capnames">capnames = T.flag_capnames( [term] )</a></B><BR>
+<B><a name="num_capnames">capnames = T.num_capnames( [term] )</a></B><BR>
+<B><a name="str_capnames">capnames = T.str_capnames( [term] )</a></B><BR>
 Return arrays of the <em>capnames</em> of the supported
 flags, numbers, and strings respectively.
 <p>
 </p>
-<B><a name="flag_varnames">varnames = T.flag_varnames( [TERM] )</a></B><BR>
-<B><a name="num_varnames">varnames = T.num_varnames( [TERM] )</a></B><BR>
-<B><a name="str_varnames">varnames = T.str_varnames( [TERM] )</a></B><BR>
+<B><a name="flag_varnames">varnames = T.flag_varnames( [term] )</a></B><BR>
+<B><a name="num_varnames">varnames = T.num_varnames( [term] )</a></B><BR>
+<B><a name="str_varnames">varnames = T.str_varnames( [term] )</a></B><BR>
 Return arrays of the <em>varnames</em> of the supported
 flags, numbers, and strings respectively.
 <p>
@@ -138,7 +180,8 @@ flags, numbers, and strings respectively.
 <hr />
 <h3><a name="download">DOWNLOAD</a></h3>
 <p>This module is available as a LuaRock in
-luarocks.org/repositories/rocks
+<A HREF="http://luarocks.org/repositories/rocks/index.html#terminfo">
+luarocks.org/repositories/rocks</A>
 so you should be able to install it with the command:</p>
 <pre>
  $ su
@@ -146,22 +189,23 @@ so you should be able to install it with the command:</p>
  # luarocks install terminfo</pre>
 <p>or:</p>
 <pre>
- # luarocks install <a href="http://www.pjb.com.au/comp/lua/terminfo-1.0-0.rockspec">http://www.pjb.com.au/comp/lua/terminfo-1.0-0.rockspec</a></pre>
+ # luarocks install <a href="http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec">http://www.pjb.com.au/comp/lua/terminfo-1.1-0.rockspec</a></pre>
 <p>
 </p>
 <hr />
 <h3><a name="changes">CHANGES</a></h3>
 <pre>
+ 20130917 1.1 introduce <A HREF="#tparm">tparm()</A>
  20130915 1.0 first working version</pre>
 <p>
 </p>
 <hr />
 <h3><a name="author">AUTHOR</a></h3>
-<p>Translated into Lua by Peter Billam (
-<a href="http://www.pjb.com.au/comp/contact.html">http://www.pjb.com.au/comp/contact.html</a>
-) from the Perl CPAN module (
-<a href="http://search.cpan.org/perldoc?Term::Terminfo">http://search.cpan.org/perldoc?Term::Terminfo</a>
-) by Paul Evans</p>
+<p>Translated into Lua by Peter Billam
+(<a href="http://www.pjb.com.au/comp/contact.html">www.pjb.com.au/comp/contact.html</a>)
+from the Perl CPAN module
+(<a href="http://search.cpan.org/perldoc?Term::Terminfo">search.cpan.org/perldoc?Term::Terminfo</a>)
+by Paul Evans</p>
 <p>
 </p>
 <hr />
@@ -170,13 +214,12 @@ so you should be able to install it with the command:</p>
  <a href="https://github.com/mauke/unibilium">unibilium</A> - a terminfo parsing library
  <a href="http://search.cpan.org/perldoc?Term::Terminfo">http://search.cpan.org/perldoc?Term::Terminfo</a>
  man terminfo
- ~/.terminfo/
- /etc/terminfo/
- /lib/terminfo/
  /usr/share/terminfo/
  tput
- tic
+ infocmp
+ <A HREF="http://linux.die.net/man/3/tparm">linux.die.net/man/3/tparm</A>
  <A HREF="http://www.pjb.com.au">www.pjb.com.au</A>
+ <A HREF="http://www.pjb.com.au/comp/">www.pjb.com.au/comp/</A>
 </pre>
 
 </DIV>
